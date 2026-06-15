@@ -1,1 +1,33 @@
-
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: honeypot-auth
+  labels:
+    app: honeypot
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: honeypot
+  template:
+    metadata:
+      labels:
+        app: honeypot
+    spec:
+      containers:
+      - name: fake-ssh
+        image: linuxserver/openssh-server
+        ports:
+        - containerPort: 2222
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: honeypot-service
+spec:
+  selector:
+    app: honeypot
+  ports:
+    - protocol: TCP
+      port: 22
+      targetPort: 2222
